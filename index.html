@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+<head>
+	<title>Maps Draft Version 1</title>
+	<meta charset="UTF-8" />
+	<style>
+	body{padding: 0px;margin: 0;}
+		#map_canvas{height:450px;margin:0 auto;position: absolute;left: 0px;right: 0px;margin:0 auto;}
+		#newscontainer{position: absolute;top:525px;font-size: 17px;}
+		.news-heading{position: absolute;top:460px;}
+		.news-heading span{font-size: 12px;font-style: italic;}
+	</style>
+	<script type="text/javascript" src="http://www.google.com/jsapi"></script> 
+ <script src="https://maps.googleapis.com/maps/api/js?&sensor=false" type="text/javascript"></script>
+	<script>
+			function initialize() { 
+				var map,marker,infoWindow, geocoder;
+				var mapOptions = {
+					center: new google.maps.LatLng(12.397,77.644),
+					zoom: 4,
+					mapTypeId:google.maps.MapTypeId.ROADMAP
+				}
+				var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+				var marker = new google.maps.Marker({
+					position:new google.maps.LatLng(12.397,77.644),
+					map:map,
+					draggable:true
+				}); 
+				google.maps.event.addListener(marker,'dragend', function(e) {
+						
+					getAddress(e.latLng);
+					setTimeout('OnLoad();', 500);
+					
+				})
+					function getAddress(latLng) {  
+			if(!geocoder) { 
+				geocoder = new google.maps.Geocoder();
+			}
+			var geocoderRequest = {
+				latLng:latLng
+			}
+			geocoder.geocode(geocoderRequest, function(results, status) {
+				_results = results;
+				/*if(!infoWindow) {
+					infoWindow = new google.maps.InfoWindow();
+				}*/
+				infoWindow.setPosition(latLng);
+				var content = "<h2>Position :" +latLng.toUrlValue()+ "</h2>"
+				if(status == google.maps.GeocoderStatus.OK) {
+					var arr = [];
+					for(var i =0;i <results.length; i++) {
+						if(results[0].formatted_address) { 
+							content += i + ". " +results[i].formatted_address + "<br />";
+							
+						}
+					}
+					
+		}
+				else {
+					content += "<p>This is Ocean = " + status + "</p>"
+				}
+				infoWindow.setContent(content);
+				infoWindow.open(map);
+				
+			});
+}
+
+		}
+		
+ function OnLoad() { var loc = _results[3].formatted_address; 
+        
+      var feed = new google.feeds.Feed("http://news.google.com/news?q="+loc+"&output=rss");
+    feed.setNumEntries(11);
+    feed.load(feedLoaded);
+      
+    }
+
+	</script>
+		<script type="text/javascript">
+        google.load("feeds", "1");
+     function feedLoaded(result) {
+      if (!result.error) {
+        // Grab the container we will put the results into
+        var container = document.getElementById("newscontainer");
+        container.innerHTML = '';
+    for (var i = 0; i < result.feed.entries.length; i++) {
+          var entry = result.feed.entries[i]; 
+          var a = document.createElement("a");
+          a.appendChild(document.createTextNode(entry.title));
+          var link = entry.link;
+          a.href = link;
+          container.appendChild(a);
+          a.style.display = "block";
+          a.setAttribute("target","_blank");
+          a.style.padding = "10px 5px";
+        }
+      }
+    }
+    
+    </script>
+</head>
+<body onload="initialize();">
+	<div class="wrapper">
+	<div id="map_canvas">
+	</div>
+	<h1 class="news-heading">Loading News from the Location where marker is placed right now<span>News may not be aviable at all the places</span></h1>
+	<div id="newscontainer">Drag and Drop the market to load the News from that area...
+		
+	
+	</div>
+</div>
+	
+</body>
+</html>
