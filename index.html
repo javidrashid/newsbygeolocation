@@ -3,13 +3,15 @@
 <head>
 	<title>Maps Draft Version 1</title>
 	<meta charset="UTF-8" />
+	<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
 	<style>
 	body{padding: 0px;margin: 0;}
-		#map_canvas{height:450px;margin:0 auto;position: absolute;left: 0px;right: 0px;margin:0 auto;}
-		#newscontainer{position: absolute;top:525px;font-size: 17px;}
-		.news-heading{position: absolute;top:460px;}
-		.news-heading span{font-size: 12px;font-style: italic;}
+		#map_canvas{height:450px;}
+		#newscontainer1{position: absolute;top:525px;font-size: 17px;}
+		.news-heading1{position: absolute;top:460px;}
+		.news-heading1 span{font-size: 12px;font-style: italic;}
 	</style>
+
 	<script type="text/javascript" src="http://www.google.com/jsapi"></script> 
  <script src="https://maps.googleapis.com/maps/api/js?&sensor=false" type="text/javascript"></script>
 	<script>
@@ -67,10 +69,11 @@
 
 		}
 		
- function OnLoad() { var loc = _results[3].formatted_address; 
+ function OnLoad() { 
+ 	var loc = _results[3].formatted_address; 
         
       var feed = new google.feeds.Feed("http://news.google.com/news?q="+loc+"&output=rss");
-    feed.setNumEntries(11);
+    feed.setNumEntries(9);
     feed.load(feedLoaded);
       
     }
@@ -86,13 +89,16 @@
     for (var i = 0; i < result.feed.entries.length; i++) {
           var entry = result.feed.entries[i]; 
           var a = document.createElement("a");
+          var div = document.createElement("div");
           a.appendChild(document.createTextNode(entry.title));
           var link = entry.link;
           a.href = link;
-          container.appendChild(a);
+          container.appendChild(div);
+          div.appendChild(a);
+          div.className = 'alert alert-success';
           a.style.display = "block";
           a.setAttribute("target","_blank");
-          a.style.padding = "10px 5px";
+          //a.style.padding = "10px 5px";
         }
       }
     }
@@ -100,15 +106,47 @@
     </script>
 </head>
 <body onload="initialize();">
-	<div class="wrapper">
-	<div id="map_canvas">
-	</div>
-	<h1 class="news-heading">Loading News from the Location where marker is placed right now<span>News may not be aviable at all the places</span></h1>
-	<div id="newscontainer">Drag and Drop the market to load the News from that area...
+		<div class="wrapper container">
+		<div class="row">
+		<div class="col-sm-12 well">
+			<h3 class="news-heading">Loading News from the Location where marker is placed right now<span class="help-block">News may not be aviable at all the places</span></h3>
+		</div>
+			<div id="map_canvas"  class="col-sm-6">
+			</div>
+			
+			<div class="col-sm-6">
+				<div class="alert alert-info">
+					Drag and Drop the market to load the News from that area...
+				</div>
+				<div id="newscontainer">
+					
+				</div>
+				
 		
+			</div>
+			</div>
+		</div>
 	
-	</div>
-</div>
-	
+		<!-- <div class="container-fluid wrapper" style="display:none;">
+			<div class="row">
+				<div class="col-sm-6" id="map_canvas">
+					
+				</div>
+				<div class="col-sm-6">
+					<h1 class="news-heading well">Loading News from the Location where marker is placed right now<span>News may not be aviable at all the places</span></h1>
+					<div id="newscontainer">
+						<h4 class="well">
+							Drag and Drop the market to load the News from that area...
+						</h4>
+					</div>
+				</div>
+			</div>
+		</div> -->
+
+
+
+
+
+
 </body>
 </html>
